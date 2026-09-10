@@ -83,7 +83,7 @@ TEMPLATE = """  {name}:
 
 
 def main(conf_path: str) -> None:
-    print("cameras:")
+    names = []
     with open(conf_path) as f:
         for line in f:
             line = line.strip()
@@ -93,7 +93,20 @@ def main(conf_path: str) -> None:
             name = name.strip()
             if not name:
                 continue
-            print(TEMPLATE.format(name=name, host=RTSP_HOST, port=RTSP_PORT))
+
+            names.append(name)
+
+    print("cameras:")
+    for name in names:
+        print(TEMPLATE.format(name=name, host=RTSP_HOST, port=RTSP_PORT))
+
+    print("go2rtc:")
+    print("  rtsp:")
+    print("    listen: :8554")
+    print("  streams:")
+
+    for name in names:
+        print("    %s" % (name))
 
 
 if __name__ == "__main__":
