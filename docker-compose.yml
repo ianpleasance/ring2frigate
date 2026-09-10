@@ -1,0 +1,46 @@
+# docker-compose.yml
+#
+# Two setups depending on how Frigate itself is deployed - pick ONE of the
+# `network_mode` / `networks` blocks below and delete the other.
+
+services:
+  ring-frigate-push:
+    build: .
+    container_name: ring-frigate-push
+    restart: unless-stopped
+    environment:
+      RTSP_HOST: "127.0.0.1"   # see note below - change if using external network
+      RTSP_PORT: "8554"
+      LOG_DIR: "/var/log/ring-frigate"
+    volumes:
+      - ./cameras.conf:/config/cameras.conf:ro
+      # Mount each Ring drop directory (or one parent dir covering all of
+      # them) so the paths inside the container match cameras.conf exactly.
+      - /media/ring:/media/ring
+      - ./logs:/var/log/ring-frigate
+
+    # --- Option A: Frigate also runs in Docker on this same host ---------
+    # Share Frigate's network namespace directly. This means 127.0.0.1
+    # inside this container IS Frigate's localhost, so RTSP_HOST above can
+    # stay 127.0.0.1 unchanged. Replace "frigate" with your Frigate
+    # container/service name if different.
+    network_mode: "service:frigate"
+
+    # --- Option B: Frigate runs on bare metal (not in Docker) -------------
+    # Uncomment this instead of network_mode above, and it'll reach the
+    # host's network directly (Linux only - not supported on Docker
+    # Desktop for Mac/Windows).
+    # network_mode: "host"
+
+    # --- Option C: Frigate is in Docker but on a shared bridge network ----
+    # Comment out network_mode entirely and use this instead, then set
+    # RTSP_HOST to Frigate's service name (Docker's internal DNS resolves it):
+    # networks:
+    #   - frigate_default
+    # environment:
+    #   RTSP_HOST: "frigate"
+    #   RTSP_PORT: "8554"
+
+# networks:
+#   frigate_default:
+#     external: true   # the network Frigate's own compose file created
