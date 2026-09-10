@@ -170,6 +170,14 @@ Frigate's recording folders are UTC-based. Run `docker exec frigate date`
 to see what the container itself considers "now" before hunting for a
 specific hour folder under `/media/frigate/recordings/`.
 
+## Clean Up
+
+After successful processing an mp4 video file that was dropped into the watched directories, it is renamed to .mp4.done - however
+there is currently no cleanup process built into the script and the expectation is that whichever process drops the files will handle
+cleanup.
+
+This could be as simple as a crontab entry with a `find /tmp/ring2frigate -type f -name "*.mp4.done" -mmin +1440 -delete` command.
+
 ## Useful one-off checks
 
 ```bash
