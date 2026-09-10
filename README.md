@@ -172,7 +172,7 @@ specific hour folder under `/media/frigate/recordings/`.
 
 ## Clean Up
 
-After successful processing an mp4 video file that was dropped into the watched directories, it is renamed to .mp4.done - however
+After successful processing of an mp4 video file that was dropped into the watched directories it is renamed to .mp4.done - however
 there is currently no cleanup process built into the script and the expectation is that whichever process drops the files will handle
 cleanup.
 
